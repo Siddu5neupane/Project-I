@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartFit — Cart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{font-family:'DM Sans',sans-serif}body{background:#f5f4f0}
+    .sidebar{background:#fff;width:228px;min-height:100vh;flex-shrink:0;border-right:1px solid #f0f0f0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;cursor:pointer;color:#555;font-size:14px;font-weight:500;transition:all .15s}
+    .nav-item:hover{background:#f3f2ee;color:#333}.nav-item.active{background:#4a5c3a;color:#fff}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0}
+    .avatar-initials{background:#4a5c3a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:9999px}
+    .sidebar-promo{background:#f5f4f0;border-radius:12px}
+    .qty-btn{width:30px;height:30px;border:1.5px solid #e5e5e5;border-radius:8px;background:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#555;transition:all .2s}
+    .qty-btn:hover{border-color:#4a5c3a;color:#4a5c3a}
+    .toast{position:fixed;bottom:24px;right:24px;background:#4a5c3a;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(10px);transition:all .3s}
+    .toast.show{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body class="flex">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar flex flex-col px-3 py-5">
+    <div class="flex items-center gap-2 px-3 mb-6">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2L4 8v12l10 6 10-6V8L14 2z" fill="#4a5c3a"/><path d="M14 2v24M4 8l10 6 10-6" stroke="#fff" stroke-width="1.2"/></svg>
+      <div><div style="font-weight:700;font-size:15px;color:#1a1a1a">SmartFit</div><div style="font-size:10px;color:#999">Fashion with Innovation</div></div>
+    </div>
+    <nav class="flex flex-col gap-1">
+      <div class="nav-item" onclick="location.href='dashboard.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="nav-item" onclick="location.href='products.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2h12l2 6H4L6 2z"/><path d="M4 8h16l-1.5 10H5.5L4 8z"/></svg>Products</div>
+      <div class="nav-item" onclick="location.href='orders.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Orders</div>
+      <div class="nav-item" onclick="location.href='wishlist.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Wishlist</div>
+      <div class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Cart</div>
+      <div class="nav-item" onclick="location.href='measurements.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>Measurements</div>
+      <div class="nav-item" onclick="location.href='settings.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</div>
+    </nav>
+    <div class="sidebar-promo mt-auto mx-1 p-3">
+      <div style="font-weight:700;color:#1a1a1a;font-size:13px;margin-bottom:4px">New Collection</div>
+      <button onclick="location.href='products.html'" style="font-size:11px;font-weight:600;color:#333;border:1px solid #ddd;border-radius:99px;padding:5px 14px;background:#fff;cursor:pointer">Shop Now</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="flex-1 flex flex-col min-h-screen">
+    <header class="bg-white border-b border-gray-100 flex items-center gap-4 px-6 py-3 sticky top-0 z-10">
+      <h1 class="text-lg font-bold text-gray-800">Shopping Cart</h1>
+      <div class="flex items-center gap-5 ml-auto">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="location.href='settings.html'">
+          <div id="topbar-avatar" class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0"></div>
+          <div id="topbar-name" class="text-sm font-semibold text-gray-800">Loading...</div>
+        </div>
+        <button id="logoutBtn" class="text-xs font-semibold text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 transition flex items-center gap-1">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg> Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6">
+      <div class="flex gap-5 items-start flex-wrap">
+        <!-- Cart items -->
+        <div class="flex-1 min-w-0 flex flex-col gap-3" id="cartItems"></div>
+
+        <!-- Order Summary -->
+        <div class="w-72 flex-shrink-0 bg-white rounded-2xl p-5 sticky top-20">
+          <h2 class="font-bold text-gray-800 mb-4">Order Summary</h2>
+          <div class="flex flex-col gap-2 text-sm mb-4" id="summaryLines"></div>
+          <div class="border-t border-gray-100 pt-3 flex items-center justify-between font-bold text-gray-800">
+            <span>Total</span>
+            <span id="totalAmt">$0.00</span>
+          </div>
+          <div class="mt-3 mb-3">
+            <input id="promoInput" type="text" placeholder="Promo code" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none mb-2"/>
+            <button id="promoBtn" class="w-full border border-gray-200 rounded-lg py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50">Apply Code</button>
+          </div>
+          <button id="checkoutBtn" class="w-full bg-[#4a5c3a] text-white font-bold py-3 rounded-xl text-sm hover:bg-[#3b4a2e] transition">Proceed to Checkout</button>
+          <button onclick="location.href='products.html'" class="w-full mt-2 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-50 transition">Continue Shopping</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { auth } from "../js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getCart, saveCart, removeFromCart, updateCartQty, cartTotal } from "../js/products-data.js";
+    import { renderAvatar } from "../js/auth.js";
+
+    onAuthStateChanged(auth, u => {
+      if (!u) { location.href = "login.html"; return; }
+      document.getElementById("topbar-name").textContent = (u.displayName||"User").split(" ")[0];
+      renderAvatar("topbar-avatar", u.photoURL, u.displayName, "w-8 h-8 text-xs");
+    });
+    document.getElementById("logoutBtn").addEventListener("click", async () => { await signOut(auth); location.href="login.html"; });
+
+    function toast(msg) {
+      const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+      clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2500);
+    }
+
+    function render() {
+      const cart = getCart();
+      const cont = document.getElementById("cartItems");
+      const summLines = document.getElementById("summaryLines");
+      const totalEl  = document.getElementById("totalAmt");
+
+      if (cart.length === 0) {
+        cont.innerHTML = `
+          <div class="bg-white rounded-2xl p-12 text-center">
+            <svg width="60" height="60" fill="none" stroke="#ccc" stroke-width="1.5" viewBox="0 0 24 24" class="mx-auto mb-4"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <div class="text-gray-400 font-semibold text-lg mb-2">Your cart is empty</div>
+            <button onclick="location.href='products.html'" class="mt-2 bg-[#4a5c3a] text-white font-semibold px-6 py-2.5 rounded-full text-sm">Browse Products</button>
+          </div>`;
+        summLines.innerHTML = ""; totalEl.textContent = "$0.00";
+        return;
+      }
+
+      cont.innerHTML = cart.map(item => `
+        <div class="bg-white rounded-2xl p-4 flex items-center gap-4" id="ci-${item.key.replace(/[^a-z0-9]/gi,"_")}">
+          <img src="${item.img}" alt="${item.name}" style="width:72px;height:88px;object-fit:cover;border-radius:10px;flex-shrink:0"/>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-gray-800 text-sm mb-0.5">${item.name}</div>
+            <div class="text-xs text-gray-400 mb-2">Size: ${item.size} &bull; ${item.color}</div>
+            <div class="flex items-center gap-2">
+              <button class="qty-btn" data-action="dec" data-key="${item.key}">−</button>
+              <span class="font-bold text-gray-800 text-sm w-6 text-center">${item.qty}</span>
+              <button class="qty-btn" data-action="inc" data-key="${item.key}">+</button>
+            </div>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <div class="font-bold text-gray-800 text-base">$${(item.price * item.qty).toFixed(2)}</div>
+            <div class="text-xs text-gray-400 mb-2">$${item.price.toFixed(2)} each</div>
+            <button data-remove="${item.key}" class="text-xs text-red-400 hover:text-red-600 font-semibold">Remove</button>
+          </div>
+        </div>`).join("");
+
+      // Qty buttons
+      cont.querySelectorAll(".qty-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.key;
+          const c   = getCart(); const idx = c.findIndex(x=>x.key===key);
+          if (idx < 0) return;
+          if (btn.dataset.action === "inc") c[idx].qty++;
+          else { if (c[idx].qty <= 1) { removeFromCart(key); render(); return; } c[idx].qty--; }
+          saveCart(c); render();
+        });
+      });
+
+      // Remove buttons
+      cont.querySelectorAll("[data-remove]").forEach(btn => {
+        btn.addEventListener("click", () => { removeFromCart(btn.dataset.remove); render(); toast("Item removed"); });
+      });
+
+      // Summary
+      const subtotal = cart.reduce((s,i) => s+i.price*i.qty, 0);
+      const shipping = subtotal >= 75 ? 0 : 9.99;
+      const tax      = subtotal * 0.08;
+      const total    = subtotal + shipping + tax;
+      summLines.innerHTML = `
+        <div class="flex justify-between text-gray-600"><span>Subtotal (${cart.reduce((s,i)=>s+i.qty,0)} items)</span><span>$${subtotal.toFixed(2)}</span></div>
+        <div class="flex justify-between text-gray-600"><span>Shipping</span><span>${shipping===0?'<span class="text-green-600">Free</span>':"$"+shipping.toFixed(2)}</span></div>
+        <div class="flex justify-between text-gray-600"><span>Tax (8%)</span><span>$${tax.toFixed(2)}</span></div>`;
+      totalEl.textContent = `$${total.toFixed(2)}`;
+    }
+
+    // Promo code (mock)
+    document.getElementById("promoBtn").addEventListener("click", () => {
+      const code = document.getElementById("promoInput").value.trim().toUpperCase();
+      if (code === "SAVE10") toast("10% discount applied! (demo)");
+      else toast("Invalid promo code", "error");
+    });
+
+    document.getElementById("checkoutBtn").addEventListener("click", () => {
+      const cart = getCart();
+      if (!cart.length) { toast("Your cart is empty"); return; }
+      location.href = "checkout.html";
+    });
+
+    render();
+  </script>
+</body>
+</html>

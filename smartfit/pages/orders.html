@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartFit — Orders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{font-family:'DM Sans',sans-serif}body{background:#f5f4f0}
+    .sidebar{background:#fff;width:228px;min-height:100vh;flex-shrink:0;border-right:1px solid #f0f0f0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;cursor:pointer;color:#555;font-size:14px;font-weight:500;transition:all .15s}
+    .nav-item:hover{background:#f3f2ee;color:#333}.nav-item.active{background:#4a5c3a;color:#fff}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0}
+    .avatar-initials{background:#4a5c3a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:9999px}
+    .sidebar-promo{background:#f5f4f0;border-radius:12px}
+    .badge-delivered{background:#eaf3e8;color:#4a7c42;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+    .badge-shipped{background:#fef6e4;color:#b57d1a;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+    .badge-processing{background:#f0f0f0;color:#666;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+    .badge-cancelled{background:#fde8e8;color:#c0392b;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+    .order-card{background:#fff;border-radius:14px;overflow:hidden;transition:box-shadow .2s}
+    .order-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+    .order-detail{display:none;border-top:1px solid #f0f0f0;padding:16px}
+    .order-detail.open{display:block}
+    .timeline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .filter-chip{padding:6px 14px;border-radius:99px;border:1.5px solid #e5e5e5;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:all .2s}
+    .filter-chip.active{background:#4a5c3a;color:#fff;border-color:#4a5c3a}
+  </style>
+</head>
+<body class="flex">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar flex flex-col px-3 py-5">
+    <div class="flex items-center gap-2 px-3 mb-6">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2L4 8v12l10 6 10-6V8L14 2z" fill="#4a5c3a"/><path d="M14 2v24M4 8l10 6 10-6" stroke="#fff" stroke-width="1.2"/></svg>
+      <div><div style="font-weight:700;font-size:15px;color:#1a1a1a">SmartFit</div><div style="font-size:10px;color:#999">Fashion with Innovation</div></div>
+    </div>
+    <nav class="flex flex-col gap-1">
+      <div class="nav-item" onclick="location.href='dashboard.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="nav-item" onclick="location.href='products.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2h12l2 6H4L6 2z"/><path d="M4 8h16l-1.5 10H5.5L4 8z"/></svg>Products</div>
+      <div class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Orders</div>
+      <div class="nav-item" onclick="location.href='wishlist.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Wishlist</div>
+      <div class="nav-item" onclick="location.href='cart.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Cart</div>
+      <div class="nav-item" onclick="location.href='measurements.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>Measurements</div>
+      <div class="nav-item" onclick="location.href='settings.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</div>
+    </nav>
+    <div class="sidebar-promo mt-auto mx-1 p-3">
+      <div style="font-weight:700;color:#1a1a1a;font-size:13px;margin-bottom:4px">New Collection</div>
+      <button onclick="location.href='products.html'" style="font-size:11px;font-weight:600;color:#333;border:1px solid #ddd;border-radius:99px;padding:5px 14px;background:#fff;cursor:pointer">Shop Now</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="flex-1 flex flex-col min-h-screen">
+    <header class="bg-white border-b border-gray-100 flex items-center gap-4 px-6 py-3 sticky top-0 z-10">
+      <h1 class="text-lg font-bold text-gray-800">My Orders</h1>
+      <div class="flex items-center gap-5 ml-auto">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="location.href='settings.html'">
+          <div id="topbar-avatar" class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0"></div>
+          <div id="topbar-name" class="text-sm font-semibold text-gray-800">Loading...</div>
+        </div>
+        <button id="logoutBtn" class="text-xs font-semibold text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 transition flex items-center gap-1">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg> Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6">
+      <!-- Filters -->
+      <div class="flex gap-2 mb-5 flex-wrap" id="statusFilters">
+        <button class="filter-chip active" data-status="All">All Orders</button>
+        <button class="filter-chip" data-status="Processing">Processing</button>
+        <button class="filter-chip" data-status="Shipped">Shipped</button>
+        <button class="filter-chip" data-status="Delivered">Delivered</button>
+        <button class="filter-chip" data-status="Cancelled">Cancelled</button>
+      </div>
+
+      <div id="ordersList" class="flex flex-col gap-4"></div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { auth } from "../js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getOrders } from "../js/products-data.js";
+    import { renderAvatar } from "../js/auth.js";
+
+    onAuthStateChanged(auth, u => {
+      if (!u) { location.href = "login.html"; return; }
+      document.getElementById("topbar-name").textContent = (u.displayName||"User").split(" ")[0];
+      renderAvatar("topbar-avatar", u.photoURL, u.displayName, "w-8 h-8 text-xs");
+    });
+    document.getElementById("logoutBtn").addEventListener("click", async () => { await signOut(auth); location.href="login.html"; });
+
+    // Seed demo orders if empty
+    function seedDemoOrders() {
+      const existing = getOrders();
+      if (existing.length > 0) return;
+      const demo = [
+        { id:"ORD1234", date:"2025-05-10T10:00:00Z", status:"Delivered", total:49.99, items:[{name:"Men Solid Shirt",img:"https://images.unsplash.com/photo-1602810319428-019690571b5b?w=60&q=80",size:"M",color:"White",qty:1,price:49.99}], address:{name:"John Doe",city:"New York",country:"United States"}, payment:"card" },
+        { id:"ORD1233", date:"2025-05-18T14:30:00Z", status:"Shipped",   total:79.99, items:[{name:"Denim Jacket",img:"https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=60&q=80",size:"L",color:"Blue",qty:1,price:79.99}], address:{name:"John Doe",city:"New York",country:"United States"}, payment:"card" },
+        { id:"ORD1232", date:"2025-05-25T09:15:00Z", status:"Processing", total:59.99, items:[{name:"Casual Sneakers",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=60&q=80",size:"9",color:"White",qty:1,price:59.99}], address:{name:"John Doe",city:"New York",country:"United States"}, payment:"cod" },
+        { id:"ORD1231", date:"2025-04-20T12:00:00Z", status:"Delivered",  total:19.99, items:[{name:"Graphic T-Shirt",img:"https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=60&q=80",size:"M",color:"Black",qty:1,price:19.99}], address:{name:"John Doe",city:"New York",country:"United States"}, payment:"card" },
+      ];
+      localStorage.setItem("sf_orders", JSON.stringify(demo));
+    }
+
+    seedDemoOrders();
+
+    let currentFilter = "All";
+
+    function badgeHtml(status) {
+      const map = { Delivered:"badge-delivered", Shipped:"badge-shipped", Processing:"badge-processing", Cancelled:"badge-cancelled" };
+      return `<span class="${map[status]||"badge-processing"}">${status}</span>`;
+    }
+
+    function timelineHtml(status) {
+      const steps = ["Order Placed","Processing","Shipped","Delivered"];
+      const idx   = { "Order Placed":0, Processing:1, Shipped:2, Delivered:3, Cancelled:1 };
+      const cur   = idx[status] ?? 1;
+      return `<div style="display:flex;align-items:center;gap:0;margin-top:12px">
+        ${steps.map((s,i) => `
+          <div style="display:flex;align-items:center;gap:4px;flex:${i<steps.length-1?1:"none"}">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div class="timeline-dot" style="background:${i<=cur?"#4a5c3a":"#e5e5e5"};margin-top:0"></div>
+              <div style="font-size:10px;font-weight:${i===cur?700:500};color:${i<=cur?"#4a5c3a":"#aaa"};white-space:nowrap">${s}</div>
+            </div>
+            ${i<steps.length-1?`<div style="flex:1;height:2px;background:${i<cur?"#4a5c3a":"#e5e5e5"};margin-bottom:14px"></div>`:""}
+          </div>`).join("")}
+      </div>`;
+    }
+
+    function render() {
+      const orders = getOrders().filter(o => currentFilter==="All" || o.status===currentFilter);
+      const list   = document.getElementById("ordersList");
+
+      if (!orders.length) {
+        list.innerHTML = `<div class="bg-white rounded-2xl p-12 text-center">
+          <svg width="56" height="56" fill="none" stroke="#ccc" stroke-width="1.5" viewBox="0 0 24 24" class="mx-auto mb-4"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          <div class="text-gray-400 font-semibold text-lg mb-2">No orders found</div>
+          <button onclick="location.href='products.html'" class="mt-2 bg-[#4a5c3a] text-white font-semibold px-6 py-2.5 rounded-full text-sm">Start Shopping</button>
+        </div>`; return;
+      }
+
+      list.innerHTML = orders.map(o => {
+        const date = new Date(o.date).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"});
+        return `
+        <div class="order-card">
+          <div class="p-4 flex items-center gap-3 cursor-pointer" onclick="toggleDetail('${o.id}')">
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+                <span style="font-size:14px;font-weight:700;color:#1a1a1a">#${o.id}</span>
+                ${badgeHtml(o.status)}
+              </div>
+              <div style="font-size:12px;color:#888">${date} &bull; ${o.items.length} item${o.items.length!==1?"s":""} &bull; ${o.payment==="cod"?"Cash on Delivery":"Card payment"}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-size:16px;font-weight:700;color:#1a1a1a">$${(o.total||0).toFixed(2)}</div>
+              <div style="font-size:11px;color:#888">${o.address?.city||""}, ${o.address?.country||""}</div>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="#aaa" stroke-width="2" viewBox="0 0 24 24" id="chevron-${o.id}"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+
+          <div class="order-detail" id="detail-${o.id}">
+            ${timelineHtml(o.status)}
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+              ${o.items.map(item=>`
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="${item.img}" style="width:48px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0"/>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;color:#1a1a1a">${item.name}</div>
+                  <div style="font-size:12px;color:#888">Size: ${item.size} · ${item.color} · ×${item.qty}</div>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:#1a1a1a">$${(item.price*item.qty).toFixed(2)}</div>
+              </div>`).join("")}
+            </div>
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0f0f0;display:flex;gap:8px">
+              <button onclick="location.href='products.html'" style="flex:1;padding:8px;border:1.5px solid #4a5c3a;border-radius:8px;font-size:12px;font-weight:600;color:#4a5c3a;background:#fff;cursor:pointer">Buy Again</button>
+              ${o.status==="Delivered"?`<button style="flex:1;padding:8px;border:1.5px solid #e5e5e5;border-radius:8px;font-size:12px;font-weight:600;color:#555;background:#fff;cursor:pointer">Write Review</button>`:""}
+            </div>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    window.toggleDetail = function(id) {
+      const d = document.getElementById(`detail-${id}`);
+      const c = document.getElementById(`chevron-${id}`);
+      const isOpen = d.classList.toggle("open");
+      c.style.transform = isOpen ? "rotate(90deg)" : "";
+    };
+
+    document.getElementById("statusFilters").addEventListener("click", e => {
+      const btn = e.target.closest(".filter-chip"); if (!btn) return;
+      document.querySelectorAll(".filter-chip").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+      currentFilter = btn.dataset.status; render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

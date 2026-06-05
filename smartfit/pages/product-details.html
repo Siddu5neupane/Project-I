@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartFit — Product Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{font-family:'DM Sans',sans-serif}
+    body{background:#f5f4f0}
+    .sidebar{background:#fff;width:228px;min-height:100vh;flex-shrink:0;border-right:1px solid #f0f0f0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;cursor:pointer;color:#555;font-size:14px;font-weight:500;transition:all .15s}
+    .nav-item:hover{background:#f3f2ee;color:#333}
+    .nav-item.active{background:#4a5c3a;color:#fff}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0}
+    .avatar-initials{background:#4a5c3a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:9999px}
+    .sidebar-promo{background:#f5f4f0;border-radius:12px}
+    .size-btn{padding:8px 16px;border:1.5px solid #e5e5e5;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:all .2s}
+    .size-btn.selected{border-color:#4a5c3a;background:#4a5c3a;color:#fff}
+    .size-btn:hover:not(.selected){border-color:#4a5c3a;color:#4a5c3a}
+    .color-btn{width:28px;height:28px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:border .2s;position:relative}
+    .color-btn.selected{border-color:#4a5c3a}
+    .toast{position:fixed;bottom:24px;right:24px;background:#4a5c3a;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(10px);transition:all .3s}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .review-card{background:#f5f4f0;border-radius:10px;padding:14px}
+    .stars{display:flex;gap:2px}
+  </style>
+</head>
+<body class="flex">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar flex flex-col px-3 py-5">
+    <div class="flex items-center gap-2 px-3 mb-6">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2L4 8v12l10 6 10-6V8L14 2z" fill="#4a5c3a"/><path d="M14 2v24M4 8l10 6 10-6" stroke="#fff" stroke-width="1.2"/></svg>
+      <div><div style="font-weight:700;font-size:15px;color:#1a1a1a">SmartFit</div><div style="font-size:10px;color:#999">Fashion with Innovation</div></div>
+    </div>
+    <nav class="flex flex-col gap-1">
+      <div class="nav-item" onclick="location.href='dashboard.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="nav-item active" onclick="location.href='products.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2h12l2 6H4L6 2z"/><path d="M4 8h16l-1.5 10H5.5L4 8z"/></svg>Products</div>
+      <div class="nav-item" onclick="location.href='orders.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Orders</div>
+      <div class="nav-item" onclick="location.href='wishlist.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Wishlist</div>
+      <div class="nav-item" onclick="location.href='cart.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Cart</div>
+      <div class="nav-item" onclick="location.href='measurements.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>Measurements</div>
+      <div class="nav-item" onclick="location.href='settings.html'"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</div>
+    </nav>
+    <div class="sidebar-promo mt-auto mx-1 p-3">
+      <div style="font-weight:700;color:#1a1a1a;font-size:13px;margin-bottom:4px">New Collection</div>
+      <button onclick="location.href='products.html'" style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#333;border:1px solid #ddd;border-radius:99px;padding:5px 14px;background:#fff;cursor:pointer">Shop Now</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="flex-1 flex flex-col min-h-screen">
+    <!-- Topbar -->
+    <header class="bg-white border-b border-gray-100 flex items-center gap-4 px-6 py-3 sticky top-0 z-10">
+      <button onclick="history.back()" class="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 bg-transparent border-none cursor-pointer">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back
+      </button>
+      <div class="flex items-center gap-5 ml-auto">
+        <button onclick="location.href='cart.html'" class="relative bg-transparent border-none cursor-pointer">
+          <svg width="20" height="20" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span id="cartBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#4a5c3a;color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:99px;align-items:center;justify-content:center"></span>
+        </button>
+        <div class="flex items-center gap-2 cursor-pointer" onclick="location.href='settings.html'">
+          <div id="topbar-avatar" class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0"></div>
+          <div id="topbar-name" class="text-sm font-semibold text-gray-800">Loading...</div>
+        </div>
+        <button id="logoutBtn" class="text-xs font-semibold text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 transition flex items-center gap-1">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg> Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6">
+      <div id="productContent" class="bg-white rounded-2xl p-6 flex gap-8 flex-wrap">
+        <div class="text-gray-400 text-sm">Loading product…</div>
+      </div>
+
+      <!-- Related products -->
+      <div class="mt-6">
+        <h2 class="font-bold text-gray-800 text-lg mb-4">You May Also Like</h2>
+        <div id="relatedGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { auth } from "../js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { PRODUCTS, getProductById, addToCart, toggleWishlist, isWishlisted, getCart, starsHTML } from "../js/products-data.js";
+    import { renderAvatar } from "../js/auth.js";
+
+    onAuthStateChanged(auth, u => {
+      if (!u) { location.href = "login.html"; return; }
+      document.getElementById("topbar-name").textContent = (u.displayName || "User").split(" ")[0];
+      renderAvatar("topbar-avatar", u.photoURL, u.displayName, "w-8 h-8 text-xs");
+    });
+    document.getElementById("logoutBtn").addEventListener("click", async () => { await signOut(auth); location.href="login.html"; });
+
+    const id = new URLSearchParams(location.search).get("id");
+    const p  = getProductById(id);
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem("sf_cart")||"[]");
+      const count= cart.reduce((s,i)=>s+(i.qty||1),0);
+      const badge= document.getElementById("cartBadge");
+      badge.textContent=count; badge.style.display=count>0?"flex":"none";
+    }
+
+    function toast(msg, type="success") {
+      const t=document.getElementById("toast");
+      t.textContent=msg; t.style.background=type==="error"?"#c0392b":"#4a5c3a";
+      t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2500);
+    }
+
+    if (!p) {
+      document.getElementById("productContent").innerHTML = `<div class="text-center py-12 w-full"><p class="text-gray-500">Product not found.</p><a href="products.html" class="text-sm text-green-700 font-semibold mt-2 inline-block">← Back to Products</a></div>`;
+    } else {
+      document.title = `SmartFit — ${p.name}`;
+      let selSize  = p.sizes[0];
+      let selColor = p.colors[0];
+      let wished   = isWishlisted(p.id);
+
+      const colorMap = { White:"#f5f5f5", Blue:"#3b82f6", Beige:"#d4a57a", Black:"#1a1a1a", Grey:"#9ca3af", Navy:"#1e3a5f", Khaki:"#c3b091", Olive:"#6b7c43", Red:"#ef4444", "Dark Blue":"#1e3a5f", "Navy/White":"#1e3a5f", "Black/White":"#1a1a1a" };
+
+      function renderProduct() {
+        document.getElementById("productContent").innerHTML = `
+          <div style="flex-shrink:0;width:340px">
+            <img src="${p.img}" alt="${p.name}" style="width:100%;height:420px;object-fit:cover;border-radius:16px"/>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
+              <div>
+                <div style="font-size:10px;font-weight:600;color:#4a5c3a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">${p.category}</div>
+                <h1 style="font-size:24px;font-weight:700;color:#1a1a1a;line-height:1.2">${p.name}</h1>
+              </div>
+              <button id="wishBtn" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #e5e5e5;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="16" height="16" fill="${wished?"#e53e3e":"none"}" stroke="${wished?"#e53e3e":"#555"}" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              </button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+              <div class="stars">${starsHTML(p.rating)}</div>
+              <span style="font-size:13px;color:#888">${p.rating} (${p.reviews} reviews)</span>
+            </div>
+
+            <div style="font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:20px">$${p.price.toFixed(2)}</div>
+
+            <div style="margin-bottom:18px">
+              <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:8px">Select Size</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap" id="sizeBtns">
+                ${p.sizes.map(s=>`<button class="size-btn${s===selSize?" selected":""}" data-size="${s}">${s}</button>`).join("")}
+              </div>
+            </div>
+
+            <div style="margin-bottom:24px">
+              <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:8px">Select Colour</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap" id="colorBtns">
+                ${p.colors.map(c=>`<button class="color-btn${c===selColor?" selected":""}" data-color="${c}" style="background:${colorMap[c]||"#ccc"}" title="${c}"></button>`).join("")}
+              </div>
+              <div style="font-size:12px;color:#888;margin-top:6px" id="colorLabel">${selColor}</div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <button id="addCartBtn" style="flex:1;padding:14px 24px;background:#4a5c3a;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s">Add to Cart</button>
+              <button id="buyNowBtn" style="flex:1;padding:14px 24px;background:#1a1a1a;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">Buy Now</button>
+            </div>
+
+            <div style="margin-top:20px;padding:14px;background:#f5f4f0;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap">
+              <div style="font-size:12px;color:#555"><strong style="color:#1a1a1a">Free Shipping</strong><br/>On orders over $75</div>
+              <div style="font-size:12px;color:#555"><strong style="color:#1a1a1a">Easy Returns</strong><br/>30-day return policy</div>
+              <div style="font-size:12px;color:#555"><strong style="color:#1a1a1a">Secure Checkout</strong><br/>256-bit SSL encrypted</div>
+            </div>
+          </div>
+
+          <!-- Reviews mock -->
+          <div style="width:100%;border-top:1px solid #f0f0f0;padding-top:24px;margin-top:8px">
+            <h2 style="font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:16px">Customer Reviews</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+              ${mockReviews().map(r=>`
+              <div class="review-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                  <div style="font-size:13px;font-weight:600;color:#1a1a1a">${r.name}</div>
+                  <div class="stars">${starsHTML(r.rating)}</div>
+                </div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px">${r.date}</div>
+                <div style="font-size:13px;color:#555;line-height:1.5">${r.text}</div>
+              </div>`).join("")}
+            </div>
+          </div>
+        `;
+
+        // Wire size buttons
+        document.getElementById("sizeBtns").querySelectorAll(".size-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            selSize = btn.dataset.size;
+            document.querySelectorAll(".size-btn").forEach(b=>b.classList.remove("selected"));
+            btn.classList.add("selected");
+          });
+        });
+
+        // Wire color buttons
+        document.getElementById("colorBtns").querySelectorAll(".color-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            selColor = btn.dataset.color;
+            document.getElementById("colorLabel").textContent = selColor;
+            document.querySelectorAll(".color-btn").forEach(b=>b.classList.remove("selected"));
+            btn.classList.add("selected");
+          });
+        });
+
+        // Add to cart
+        document.getElementById("addCartBtn").addEventListener("click", () => {
+          addToCart(p, selSize, selColor, 1);
+          updateCartBadge();
+          toast("Added to cart!");
+        });
+
+        // Buy now
+        document.getElementById("buyNowBtn").addEventListener("click", () => {
+          addToCart(p, selSize, selColor, 1);
+          location.href = "cart.html";
+        });
+
+        // Wishlist
+        document.getElementById("wishBtn").addEventListener("click", () => {
+          wished = toggleWishlist(p.id);
+          const path = document.querySelector("#wishBtn path");
+          path.setAttribute("fill", wished?"#e53e3e":"none");
+          path.setAttribute("stroke", wished?"#e53e3e":"#555");
+          toast(wished?"Added to Wishlist":"Removed from Wishlist");
+        });
+      }
+
+      function mockReviews() {
+        return [
+          { name:"Alex M.",    rating:5, date:"May 2025", text:"Perfect fit and great quality material. Delivery was super fast too!" },
+          { name:"Priya S.",   rating:4, date:"Apr 2025", text:"Love the colour and the cut. Would recommend ordering true to size." },
+          { name:"James K.",   rating:5, date:"Mar 2025", text:"Best purchase this season. The fabric is breathable and very comfortable." },
+          { name:"Sophie T.",  rating:4, date:"Feb 2025", text:"Good quality. Runs slightly large so consider sizing down." },
+        ];
+      }
+
+      renderProduct();
+
+      // Related products
+      const related = PRODUCTS.filter(x => x.id !== p.id && x.category === p.category).slice(0, 4);
+      document.getElementById("relatedGrid").innerHTML = related.map(r => `
+        <div style="background:#fff;border-radius:14px;overflow:hidden;cursor:pointer" onclick="location.href='product-details.html?id=${r.id}'">
+          <img src="${r.img}" alt="${r.name}" style="width:100%;height:180px;object-fit:cover"/>
+          <div style="padding:12px">
+            <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px">${r.name}</div>
+            <div style="font-size:14px;font-weight:700;color:#1a1a1a">$${r.price.toFixed(2)}</div>
+          </div>
+        </div>`).join("");
+    }
+
+    updateCartBadge();
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem("sf_cart")||"[]");
+      const count= cart.reduce((s,i)=>s+(i.qty||1),0);
+      const badge= document.getElementById("cartBadge");
+      badge.textContent=count; badge.style.display=count>0?"flex":"none";
+    }
+  </script>
+</body>
+</html>

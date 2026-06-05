@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings — SmartFit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/shared.css"/>
+  <style>
+    .settings-section{background:#fff;border-radius:18px;padding:24px;}
+    .toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+    .toggle input{opacity:0;width:0;height:0;position:absolute;}
+    .toggle-track{position:absolute;inset:0;background:#e5e7eb;border-radius:999px;transition:background .2s;}
+    .toggle input:checked ~ .toggle-track{background:#4a5c3a;}
+    .toggle-thumb{position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+    .toggle input:checked ~ .toggle-thumb{transform:translateX(20px);}
+    .settings-tab{padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;color:#666;transition:all .15s;display:flex;align-items:center;gap:8px;}
+    .settings-tab:hover{background:#f3f2ee;color:#333;}
+    .settings-tab.active{background:#4a5c3a;color:#fff;}
+    .form-input{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-size:14px;outline:none;transition:border .15s;font-family:'DM Sans',sans-serif;}
+    .form-input:focus{border-color:#4a5c3a;}
+    .danger-zone{border:1.5px solid #fee2e2;border-radius:14px;padding:16px;}
+  </style>
+</head>
+<body class="flex">
+<div id="sidebar-placeholder"></div>
+<div class="flex-1 flex flex-col min-h-screen">
+  <div id="topbar-placeholder"></div>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-5">Settings</h1>
+ 
+    <div class="flex gap-5 items-start">
+      <!-- Settings nav -->
+      <div class="w-52 flex-shrink-0 bg-white rounded-2xl p-3 flex flex-col gap-1">
+        <div class="settings-tab active" data-panel="profile">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>Profile
+        </div>
+        <div class="settings-tab" data-panel="notifications">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Notifications
+        </div>
+        <div class="settings-tab" data-panel="privacy">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy
+        </div>
+        <div class="settings-tab" data-panel="appearance">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Appearance
+        </div>
+        <div class="settings-tab" data-panel="account">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Account
+        </div>
+      </div>
+ 
+      <!-- Panels -->
+      <div class="flex-1 min-w-0">
+ 
+        <!-- Profile -->
+        <div id="panel-profile" class="settings-section">
+          <div class="font-bold text-gray-800 mb-5">Profile Information</div>
+          <div class="flex items-center gap-4 mb-6">
+            <div id="settings-avatar" class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0"></div>
+            <div>
+              <div id="settings-display-name" class="font-bold text-gray-800"></div>
+              <div id="settings-display-email" class="text-sm text-gray-400 mt-0.5"></div>
+              <div class="text-xs text-gray-400 mt-2 bg-[#eaf3e8] text-[#4a7c42] px-3 py-1 rounded-full inline-block">Google Account</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="text-xs font-medium text-gray-500 block mb-1.5">Display Name</label><input class="form-input" id="pref-name" placeholder="Your name"/></div>
+            <div><label class="text-xs font-medium text-gray-500 block mb-1.5">Phone</label><input class="form-input" id="pref-phone" placeholder="+1 555 0000"/></div>
+            <div><label class="text-xs font-medium text-gray-500 block mb-1.5">Date of Birth</label><input class="form-input" id="pref-dob" type="date"/></div>
+            <div><label class="text-xs font-medium text-gray-500 block mb-1.5">Gender</label>
+              <select class="form-input" id="pref-gender"><option>Prefer not to say</option><option>Male</option><option>Female</option><option>Non-binary</option></select>
+            </div>
+            <div class="col-span-2"><label class="text-xs font-medium text-gray-500 block mb-1.5">Bio</label><textarea class="form-input" id="pref-bio" rows="3" placeholder="Tell us a bit about your style..."></textarea></div>
+          </div>
+          <button id="save-profile-btn" class="btn-primary mt-4">Save Changes</button>
+        </div>
+ 
+        <!-- Notifications -->
+        <div id="panel-notifications" class="settings-section hidden">
+          <div class="font-bold text-gray-800 mb-5">Notification Preferences</div>
+          <div class="flex flex-col gap-4">
+            ${[
+              {id:"n-orders",    label:"Order updates",         desc:"Get notified about order status changes",       def:true},
+              {id:"n-promotions",label:"Promotions & offers",   desc:"Receive deals, discounts and new arrivals",     def:true},
+              {id:"n-wishlist",  label:"Wishlist price drops",  desc:"Alert when wishlisted items go on sale",        def:true},
+              {id:"n-tryon",     label:"Try-On reminders",      desc:"Reminders to try on saved outfits",             def:false},
+              {id:"n-email",     label:"Email newsletter",      desc:"Weekly style inspiration and new products",     def:false},
+            ].map(n=>`
+              <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                <div><div class="text-sm font-medium text-gray-700">${n.label}</div><div class="text-xs text-gray-400 mt-0.5">${n.desc}</div></div>
+                <label class="toggle"><input type="checkbox" ${n.def?"checked":""} id="${n.id}"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+              </div>`).join("")}
+          </div>
+          <button id="save-notifications-btn" class="btn-primary mt-4">Save Preferences</button>
+        </div>
+ 
+        <!-- Privacy -->
+        <div id="panel-privacy" class="settings-section hidden">
+          <div class="font-bold text-gray-800 mb-5">Privacy Settings</div>
+          <div class="flex flex-col gap-4">
+            ${[
+              {id:"p-analytics",   label:"Usage analytics",      desc:"Help us improve by sharing anonymous usage data", def:true},
+              {id:"p-personalized",label:"Personalized recommendations",desc:"Allow AI to tailor product suggestions for you",def:true},
+              {id:"p-tryon-data",  label:"Save try-on data",     desc:"Store your try-on sessions for recommendations", def:false},
+            ].map(p=>`
+              <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                <div><div class="text-sm font-medium text-gray-700">${p.label}</div><div class="text-xs text-gray-400 mt-0.5">${p.desc}</div></div>
+                <label class="toggle"><input type="checkbox" ${p.def?"checked":""}/><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+              </div>`).join("")}
+          </div>
+          <button class="btn-primary mt-4">Save Privacy Settings</button>
+        </div>
+ 
+        <!-- Appearance -->
+        <div id="panel-appearance" class="settings-section hidden">
+          <div class="font-bold text-gray-800 mb-5">Appearance</div>
+          <div class="mb-4">
+            <div class="text-sm font-medium text-gray-700 mb-2">Theme</div>
+            <div class="flex gap-3">
+              <div class="flex-1 border-2 border-[#4a5c3a] rounded-xl p-4 cursor-pointer bg-[#f8fbf6] text-center">
+                <div class="w-8 h-8 bg-white rounded-full mx-auto mb-2 border border-gray-200"></div>
+                <div class="text-xs font-semibold text-gray-700">Light</div>
+              </div>
+              <div class="flex-1 border-2 border-gray-200 rounded-xl p-4 cursor-pointer text-center opacity-60">
+                <div class="w-8 h-8 bg-gray-800 rounded-full mx-auto mb-2"></div>
+                <div class="text-xs font-semibold text-gray-700">Dark <span class="text-[10px] text-gray-400">(coming soon)</span></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="text-sm font-medium text-gray-700 mb-2">Currency</div>
+            <select class="form-input" style="max-width:200px">
+              <option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option><option>INR (₹)</option><option>NPR (₨)</option>
+            </select>
+          </div>
+          <div class="mt-4">
+            <div class="text-sm font-medium text-gray-700 mb-2">Language</div>
+            <select class="form-input" style="max-width:200px">
+              <option>English</option><option>Hindi</option><option>Nepali</option><option>French</option>
+            </select>
+          </div>
+          <button class="btn-primary mt-4">Save Appearance</button>
+        </div>
+ 
+        <!-- Account -->
+        <div id="panel-account" class="settings-section hidden">
+          <div class="font-bold text-gray-800 mb-5">Account Management</div>
+          <div class="flex flex-col gap-4">
+            <div class="danger-zone">
+              <div class="font-semibold text-red-700 mb-1">Clear All Data</div>
+              <div class="text-sm text-gray-500 mb-3">This will clear your cart, wishlist, orders and measurement data from this device. Your account will remain active.</div>
+              <button id="clear-data-btn" class="btn-danger text-sm">Clear Local Data</button>
+            </div>
+            <div class="danger-zone">
+              <div class="font-semibold text-red-700 mb-1">Sign Out</div>
+              <div class="text-sm text-gray-500 mb-3">Sign out of your SmartFit account on this device.</div>
+              <button id="signout-settings-btn" class="btn-danger text-sm">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="sf-toast"></div>
+<script type="module">
+  import { initLayout, renderAvatar } from "../js/layout.js";
+  import { auth } from "../js/firebase-config.js";
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  initLayout("settings.html");
+ 
+  // Tab navigation
+  document.querySelectorAll(".settings-tab").forEach(tab=>{
+    tab.addEventListener("click",()=>{
+      document.querySelectorAll(".settings-tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      document.querySelectorAll("[id^=panel-]").forEach(p=>p.classList.add("hidden"));
+      document.getElementById(`panel-${tab.dataset.panel}`).classList.remove("hidden");
+    });
+  });
+ 
+  // Populate profile from auth + prefs
+  onAuthStateChanged(auth, user=>{
+    if(!user) return;
+    renderAvatar("settings-avatar", user.photoURL, user.displayName, "w-20 h-20 text-2xl");
+    document.getElementById("settings-display-name").textContent = user.displayName||"";
+    document.getElementById("settings-display-email").textContent = user.email||"";
+    document.getElementById("pref-name").value = user.displayName||"";
+ 
+    const prefs = JSON.parse(localStorage.getItem("sf_prefs")||"{}");
+    if(prefs.phone) document.getElementById("pref-phone").value=prefs.phone;
+    if(prefs.dob)   document.getElementById("pref-dob").value=prefs.dob;
+    if(prefs.bio)   document.getElementById("pref-bio").value=prefs.bio;
+    if(prefs.gender){ const sel=document.getElementById("pref-gender"); for(let o of sel.options){if(o.value===prefs.gender){o.selected=true;break;}} }
+  });
+ 
+  document.getElementById("save-profile-btn").addEventListener("click",()=>{
+    const prefs={ phone:document.getElementById("pref-phone").value, dob:document.getElementById("pref-dob").value, bio:document.getElementById("pref-bio").value, gender:document.getElementById("pref-gender").value };
+    localStorage.setItem("sf_prefs",JSON.stringify(prefs)); toast("Profile saved ✓");
+  });
+ 
+  document.getElementById("save-notifications-btn")?.addEventListener("click",()=>toast("Notification preferences saved ✓"));
+ 
+  document.getElementById("clear-data-btn").addEventListener("click",()=>{
+    if(!confirm("Clear all local data? This cannot be undone."))return;
+    ["sf_cart","sf_wishlist","sf_orders","sf_measurements","sf_measurement_sets","sf_looks","sf_prefs"].forEach(k=>localStorage.removeItem(k));
+    toast("All local data cleared");
+  });
+ 
+  document.getElementById("signout-settings-btn").addEventListener("click",async()=>{
+    await signOut(auth); window.location.href="login.html";
+  });
+ 
+  function toast(msg){const t=document.getElementById("sf-toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300);}
+</script>
+</body>
+</html>

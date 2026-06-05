@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartFit Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <style>
+    * { font-family: 'DM Sans', sans-serif; }
+    body { background: #f5f4f0; }
+    .sidebar { background: #fff; width: 228px; min-height: 100vh; flex-shrink: 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; cursor: pointer; color: #555; font-size: 14px; font-weight: 500; transition: all .15s; }
+    .nav-item:hover { background: #f3f2ee; color: #333; }
+    .nav-item.active { background: #4a5c3a; color: #fff; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .stat-card { background: #fff; border-radius: 14px; padding: 20px 22px 14px; flex: 1; }
+    .stat-wave { height: 30px; width: 100%; margin-top: 8px; }
+    .badge-delivered { background: #eaf3e8; color: #4a7c42; font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .badge-shipped { background: #fef6e4; color: #b57d1a; font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .badge-processing { background: #f0f0f0; color: #666; font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .product-card { background: #f5f4f0; border-radius: 12px; overflow: hidden; flex-shrink: 0; width: 148px; }
+    .product-card img { width: 100%; height: 150px; object-fit: cover; }
+    .scroll-row { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+    .scroll-row::-webkit-scrollbar { display: none; }
+    .scroll-btn { width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background .15s; }
+    .scroll-btn:hover { background: #f0f0f0; }
+    .tryon-container { position: relative; border-radius: 12px; overflow: hidden; width: 210px; height: 280px; flex-shrink: 0; }
+    .tryon-container img { width: 100%; height: 100%; object-fit: cover; }
+    .tryon-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.8); transform: translateX(-50%); }
+    .tryon-handle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: ew-resize; }
+    .promo-banner { background: #3c4a2e; border-radius: 14px; color: #fff; }
+    .meas-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f0efeb; font-size: 13px; }
+    .meas-row:last-child { border-bottom: none; }
+    .sidebar-promo { background: #f5f4f0; border-radius: 12px; overflow: hidden; }
+    .avatar-initials { background: #4a5c3a; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; border-radius: 9999px; }
+  </style>
+</head>
+<body class="flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar flex flex-col px-3 py-5 border-r border-gray-100">
+    <div class="flex items-center gap-2 px-3 mb-6">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2L4 8v12l10 6 10-6V8L14 2z" fill="#4a5c3a"/><path d="M14 2v24M4 8l10 6 10-6" stroke="#fff" stroke-width="1.2"/></svg>
+      <div>
+        <div class="font-bold text-[15px] text-gray-800 leading-tight">SmartFit</div>
+        <div class="text-[10px] text-gray-400">Fashion with Innovation</div>
+      </div>
+    </div>
+    <nav class="flex flex-col gap-1">
+      <div class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/><path d="M17 8h2a2 2 0 012 2v2"/></svg>Virtual Try-On</div>
+     <div class="nav-item" onclick="window.location.href='products.html'">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path d="M6 2h12l2 6H4L6 2z"/>
+    <path d="M4 8h16l-1.5 10H5.5L4 8z"/>
+  </svg>
+  Products
+</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><path d="M13 17h8M17 13v8"/></svg>Categories</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>Orders</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Wishlist</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>Measurements</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>Profile</div>
+      <div class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</div>
+    </nav>
+    <div class="sidebar-promo mt-auto mx-1 p-3">
+      <div class="flex gap-2 mb-2">
+        <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=80&q=80" class="w-12 h-16 object-cover rounded-lg" alt="model1"/>
+        <img src="https://images.unsplash.com/photo-1511375927791-e3c26fd5c43b?w=80&q=80" class="w-12 h-16 object-cover rounded-lg" alt="model2"/>
+      </div>
+      <div class="font-bold text-gray-800 text-sm leading-tight">New Collection</div>
+      <div class="text-xs text-gray-500 mt-1 mb-3 leading-snug">Explore the latest fashion trends of this season.</div>
+      <button class="flex items-center gap-1 text-xs font-semibold text-gray-800 border border-gray-300 rounded-full px-4 py-1.5 hover:bg-gray-50 transition">
+        Shop Now <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 flex flex-col min-h-screen">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-gray-100 flex items-center gap-4 px-6 py-3 sticky top-0 z-10">
+      <div class="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-2 flex-1 max-w-[420px]">
+        <svg width="16" height="16" fill="none" stroke="#999" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search for products, categories..." class="bg-transparent text-sm outline-none text-gray-500 w-full"/>
+      </div>
+      <div class="flex items-center gap-5 ml-auto">
+        <button class="relative">
+          <svg width="20" height="20" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </button>
+        <button class="relative">
+          <svg width="20" height="20" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="absolute -top-1.5 -right-1.5 bg-[#4a5c3a] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+        </button>
+        <!-- Topbar user info -->
+        <div class="flex items-center gap-2 cursor-pointer">
+          <div id="topbar-avatar" class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0"></div>
+          <div>
+            <div id="topbar-name" class="text-sm font-semibold text-gray-800 leading-tight">Loading...</div>
+            <div id="topbar-email" class="text-xs text-gray-400"></div>
+          </div>
+          <svg width="14" height="14" fill="none" stroke="#999" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <!-- Logout button -->
+        <button id="logoutBtn" class="text-xs font-semibold text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 transition flex items-center gap-1">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 flex gap-5 p-6">
+      <!-- CENTER COLUMN -->
+      <div class="flex-1 min-w-0 flex flex-col gap-5">
+
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Welcome back, <span id="welcome-firstname">there</span>! 👋</h1>
+          <p class="text-sm text-gray-500 mt-0.5">Explore, style and shop smart with SmartFit.</p>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="flex gap-4">
+          <div class="stat-card"><div class="flex items-start justify-between"><div><div class="text-xs text-gray-400 font-medium">Orders</div><div class="text-3xl font-bold text-gray-800 mt-1">12</div><div class="text-xs text-gray-400 mt-0.5">Total Orders</div></div><div class="w-11 h-11 rounded-full bg-[#4a5c3a] flex items-center justify-center"><svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div></div><svg class="stat-wave" viewBox="0 0 180 30" fill="none" preserveAspectRatio="none"><path d="M0 20 Q20 10 40 18 Q60 26 80 14 Q100 4 120 16 Q140 26 160 12 Q170 6 180 14" stroke="#4a5c3a" stroke-width="1.5" fill="none" opacity="0.4"/></svg></div>
+          <div class="stat-card"><div class="flex items-start justify-between"><div><div class="text-xs text-gray-400 font-medium">Wishlist</div><div class="text-3xl font-bold text-gray-800 mt-1">18</div><div class="text-xs text-gray-400 mt-0.5">Saved Items</div></div><div class="w-11 h-11 rounded-full bg-[#c0392b] flex items-center justify-center"><svg width="20" height="20" fill="#fff" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><svg class="stat-wave" viewBox="0 0 180 30" fill="none" preserveAspectRatio="none"><path d="M0 18 Q20 8 40 20 Q60 28 80 12 Q100 2 120 18 Q140 28 160 14 Q170 8 180 16" stroke="#c0392b" stroke-width="1.5" fill="none" opacity="0.4"/></svg></div>
+          <div class="stat-card"><div class="flex items-start justify-between"><div><div class="text-xs text-gray-400 font-medium">Measurements</div><div class="text-3xl font-bold text-gray-800 mt-1">5</div><div class="text-xs text-gray-400 mt-0.5">Saved Sets</div></div><div class="w-11 h-11 rounded-full bg-[#8b6914] flex items-center justify-center"><svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12h20M12 2v20M7 7l10 10M17 7L7 17"/></svg></div></div><svg class="stat-wave" viewBox="0 0 180 30" fill="none" preserveAspectRatio="none"><path d="M0 16 Q25 6 50 18 Q75 28 100 10 Q125 2 150 16 Q165 22 180 12" stroke="#8b6914" stroke-width="1.5" fill="none" opacity="0.4"/></svg></div>
+          <div class="stat-card"><div class="flex items-start justify-between"><div><div class="text-xs text-gray-400 font-medium">Try-On Sessions</div><div class="text-3xl font-bold text-gray-800 mt-1">24</div><div class="text-xs text-gray-400 mt-0.5">This Month</div></div><div class="w-11 h-11 rounded-full bg-gray-800 flex items-center justify-center"><svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="2"/></svg></div></div><svg class="stat-wave" viewBox="0 0 180 30" fill="none" preserveAspectRatio="none"><path d="M0 14 Q30 4 60 18 Q90 28 120 10 Q150 2 180 16" stroke="#555" stroke-width="1.5" fill="none" opacity="0.4"/></svg></div>
+        </div>
+
+        <!-- Virtual Try-On + Recent Orders -->
+        <div class="flex gap-4">
+          <div class="bg-white rounded-2xl p-5 flex gap-4 flex-1">
+            <div class="flex-1">
+              <div class="font-bold text-gray-800 text-base mb-1">Virtual Try-On</div>
+              <p class="text-sm text-gray-500 leading-snug mb-5">Try outfits on yourself virtually before you buy.</p>
+              <button class="bg-[#4a5c3a] text-white text-sm font-semibold px-5 py-2.5 rounded-full flex items-center gap-2 hover:bg-[#3b4a2e] transition">Start Try-On <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+            </div>
+            <div class="tryon-container">
+              <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&q=80" alt="tryon"/>
+              <div class="tryon-line"></div>
+              <div class="tryon-handle"><svg width="14" height="14" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4l-4 4 4 4M16 4l4 4-4 4"/></svg></div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-5 flex-1">
+            <div class="flex items-center justify-between mb-4"><div class="font-bold text-gray-800">Recent Orders</div><a href="#" class="text-xs text-gray-400 hover:text-gray-700">View All</a></div>
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center gap-3"><img src="https://images.unsplash.com/photo-1602810319428-019690571b5b?w=60&q=80" class="w-10 h-10 rounded-lg object-cover" alt="shirt"/><div class="flex-1 min-w-0"><div class="text-xs font-semibold text-gray-700">#ORD1234</div><div class="text-xs text-gray-400 truncate">Men Solid Shirt</div></div><div class="text-sm font-semibold text-gray-700 mr-2">$49.99</div><span class="badge-delivered">Delivered</span></div>
+              <div class="flex items-center gap-3"><img src="https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=60&q=80" class="w-10 h-10 rounded-lg object-cover" alt="jacket"/><div class="flex-1 min-w-0"><div class="text-xs font-semibold text-gray-700">#ORD1233</div><div class="text-xs text-gray-400 truncate">Denim Jacket</div></div><div class="text-sm font-semibold text-gray-700 mr-2">$79.99</div><span class="badge-shipped">Shipped</span></div>
+              <div class="flex items-center gap-3"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=60&q=80" class="w-10 h-10 rounded-lg object-cover" alt="sneakers"/><div class="flex-1 min-w-0"><div class="text-xs font-semibold text-gray-700">#ORD1232</div><div class="text-xs text-gray-400 truncate">Casual Sneakers</div></div><div class="text-sm font-semibold text-gray-700 mr-2">$59.99</div><span class="badge-processing">Processing</span></div>
+              <div class="flex items-center gap-3"><img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=60&q=80" class="w-10 h-10 rounded-lg object-cover" alt="tshirt"/><div class="flex-1 min-w-0"><div class="text-xs font-semibold text-gray-700">#ORD1231</div><div class="text-xs text-gray-400 truncate">Graphic T-Shirt</div></div><div class="text-sm font-semibold text-gray-700 mr-2">$19.99</div><span class="badge-delivered">Delivered</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended -->
+        <div class="bg-white rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4"><div class="font-bold text-gray-800">Recommended for You</div><a href="#" class="text-xs text-gray-400 hover:text-gray-700">View All</a></div>
+          <div class="flex items-center gap-2">
+            <button class="scroll-btn" onclick="scrollProducts(-1)"><svg width="14" height="14" fill="none" stroke="#555" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="scroll-row flex-1" id="productsRow">
+              <div class="product-card relative flex-shrink-0 w-[148px]"><div class="relative"><img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&q=80" alt="Linen Shirt" class="w-full h-[150px] object-cover"/><button class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition"><svg width="13" height="13" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button></div><div class="p-2.5"><div class="text-xs font-semibold text-gray-700">Linen Casual Shirt</div><div class="text-xs font-bold text-gray-800 mt-0.5">$39.99</div></div></div>
+              <div class="product-card relative flex-shrink-0 w-[148px]"><div class="relative"><img src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=300&q=80" alt="Hoodie" class="w-full h-[150px] object-cover"/><button class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition"><svg width="13" height="13" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button></div><div class="p-2.5"><div class="text-xs font-semibold text-gray-700">Oversized Hoodie</div><div class="text-xs font-bold text-gray-800 mt-0.5">$49.99</div></div></div>
+              <div class="product-card relative flex-shrink-0 w-[148px]"><div class="relative"><img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=300&q=80" alt="Cargo Pants" class="w-full h-[150px] object-cover"/><button class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition"><svg width="13" height="13" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button></div><div class="p-2.5"><div class="text-xs font-semibold text-gray-700">Cargo Pants</div><div class="text-xs font-bold text-gray-800 mt-0.5">$59.99</div></div></div>
+              <div class="product-card relative flex-shrink-0 w-[148px]"><div class="relative"><img src="https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=300&q=80" alt="Denim Jacket" class="w-full h-[150px] object-cover"/><button class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition"><svg width="13" height="13" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button></div><div class="p-2.5"><div class="text-xs font-semibold text-gray-700">Denim Jacket</div><div class="text-xs font-bold text-gray-800 mt-0.5">$79.99</div></div></div>
+              <div class="product-card relative flex-shrink-0 w-[148px]"><div class="relative"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80" alt="Sneakers" class="w-full h-[150px] object-cover"/><button class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition"><svg width="13" height="13" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button></div><div class="p-2.5"><div class="text-xs font-semibold text-gray-700">White Sneakers</div><div class="text-xs font-bold text-gray-800 mt-0.5">$69.99</div></div></div>
+              <div class="product-card relative flex-shrink-0 w-[148px]"><div class="relative"><img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=300&q=80" alt="Striped T-Shirt" class="w-full h-[150px] object-cover"/><button class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition"><svg width="13" height="13" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button></div><div class="p-2.5"><div class="text-xs font-semibold text-gray-700">Striped T-Shirt</div><div class="text-xs font-bold text-gray-800 mt-0.5">$19.99</div></div></div>
+            </div>
+            <button class="scroll-btn" onclick="scrollProducts(1)"><svg width="14" height="14" fill="none" stroke="#555" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+        </div>
+
+        <!-- Promo Banner -->
+        <div class="promo-banner p-5 flex items-center gap-4">
+          <div class="text-[#c8d4a0] flex-shrink-0"><svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <div class="flex-1"><div class="font-bold text-white text-base">Get the perfect fit every time.</div><div class="text-xs text-gray-400 mt-0.5">Update your measurements and enjoy a better virtual try-on experience.</div></div>
+          <button class="bg-white text-gray-800 text-xs font-semibold px-4 py-2 rounded-full flex items-center gap-1.5 hover:bg-gray-100 transition flex-shrink-0">Update Now <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <div class="flex gap-6 ml-2 flex-shrink-0">
+            <div class="flex items-center gap-2 text-gray-300"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><div><div class="text-[10px] font-semibold text-white">Smart Size</div><div class="text-[10px] text-gray-400">Recommendation</div></div></div>
+            <div class="flex items-center gap-2 text-gray-300"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div><div class="text-[10px] font-semibold text-white">Better Fit</div><div class="text-[10px] text-gray-400">Assurance</div></div></div>
+            <div class="flex items-center gap-2 text-gray-300"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/></svg><div><div class="text-[10px] font-semibold text-white">Stylish You</div><div class="text-[10px] text-gray-400">Everyday</div></div></div>
+          </div>
+        </div>
+
+      </div><!-- /center -->
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="w-[220px] flex-shrink-0 flex flex-col gap-4">
+
+        <!-- Profile card -->
+        <div class="bg-white rounded-2xl p-4">
+          <div class="font-bold text-gray-800 text-sm mb-3">Your Profile</div>
+          <div class="flex flex-col items-center">
+            <div id="profile-avatar" class="w-16 h-16 rounded-full overflow-hidden mb-2 flex-shrink-0"></div>
+            <div id="profile-name" class="font-bold text-gray-800 text-sm"></div>
+            <div id="profile-email" class="text-xs text-gray-400 mb-3 text-center break-all"></div>
+            <button class="w-full text-xs font-semibold text-gray-700 border border-gray-200 rounded-lg py-1.5 hover:bg-gray-50 transition">Edit Profile</button>
+          </div>
+        </div>
+
+        <!-- Measurements card -->
+        <div class="bg-white rounded-2xl p-4 flex-1">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold text-gray-800 text-sm">Your Measurements</div>
+            <a href="#" class="text-xs text-gray-400 hover:text-gray-700">View All</a>
+          </div>
+          <div class="flex gap-2 items-start">
+            <svg viewBox="0 0 50 130" width="50" class="flex-shrink-0">
+              <circle cx="25" cy="10" r="8" fill="none" stroke="#ccc" stroke-width="1.2"/>
+              <path d="M16 22 Q10 35 12 55 L14 85 L14 115 M34 22 Q40 35 38 55 L36 85 L36 115" fill="none" stroke="#ccc" stroke-width="1.2"/>
+              <line x1="12" y1="22" x2="38" y2="22" stroke="#ccc" stroke-width="1.2"/>
+              <line x1="14" y1="60" x2="36" y2="60" stroke="#ccc" stroke-width="1.2"/>
+              <line x1="12" y1="75" x2="38" y2="75" stroke="#ccc" stroke-width="1.2"/>
+              <circle cx="25" cy="22" r="2.5" fill="#4a5c3a"/>
+              <circle cx="25" cy="60" r="2.5" fill="#4a5c3a"/>
+              <circle cx="25" cy="75" r="2.5" fill="#4a5c3a"/>
+              <circle cx="25" cy="40" r="2.5" fill="#4a5c3a"/>
+            </svg>
+            <div class="flex-1 text-xs">
+              <div class="meas-row"><span class="text-gray-500">Height</span><span class="font-semibold text-gray-700">178 cm</span></div>
+              <div class="meas-row"><span class="text-gray-500">Chest</span><span class="font-semibold text-gray-700">98 cm</span></div>
+              <div class="meas-row"><span class="text-gray-500">Waist</span><span class="font-semibold text-gray-700">82 cm</span></div>
+              <div class="meas-row"><span class="text-gray-500">Hips</span><span class="font-semibold text-gray-700">96 cm</span></div>
+              <div class="meas-row"><span class="text-gray-500">Shoulder</span><span class="font-semibold text-gray-700">46 cm</span></div>
+            </div>
+          </div>
+          <button class="w-full text-xs font-semibold text-gray-700 border border-gray-200 rounded-lg py-1.5 mt-3 hover:bg-gray-50 transition">Update Measurements</button>
+        </div>
+
+      </div><!-- /right sidebar -->
+    </main>
+  </div>
+
+  <!-- =====================================================
+       SINGLE SCRIPT BLOCK  —  type="module" so Firebase
+       ES module imports work directly in the HTML file.
+       No separate dashboard.js needed.
+  ====================================================== -->
+  <script type="module">
+
+    // ── 1. Firebase imports ───────────────────────────────────────
+    // Adjust the path to firebase-config.js to match your folder structure.
+    //
+    //  If dashboard.html is at the ROOT of your project:
+    //      import { auth } from "./firebase-config.js";
+    //
+    //  If dashboard.html is inside a sub-folder (e.g. /pages/):
+    //      import { auth } from "../firebase-config.js";
+    //
+    import { auth } from "./firebase-config.js";
+
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+    // ── 2. Auth state listener ────────────────────────────────────
+    //   Fires automatically when Firebase confirms (or denies) a session.
+    //   If no user is logged in → redirect to login page.
+    //   If a user IS logged in → populate every profile element.
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) {
+        // Not logged in — send back to login
+        window.location.href = "login.html";
+        return;
+      }
+
+      // First name only for the welcome heading
+      const firstName = (user.displayName || "there").split(" ")[0];
+
+      // ── Welcome heading ──────────────────────────────────────
+      document.getElementById("welcome-firstname").textContent = firstName;
+
+      // ── Topbar ───────────────────────────────────────────────
+      document.getElementById("topbar-name").textContent  = user.displayName || firstName;
+      document.getElementById("topbar-email").textContent = user.email;
+      renderAvatar("topbar-avatar",  user.photoURL, user.displayName, "w-8 h-8 text-xs");
+
+      // ── Right-panel profile card ─────────────────────────────
+      document.getElementById("profile-name").textContent  = user.displayName || firstName;
+      document.getElementById("profile-email").textContent = user.email;
+      renderAvatar("profile-avatar", user.photoURL, user.displayName, "w-16 h-16 text-xl");
+
+    });
+
+
+    // ── 3. Logout button ──────────────────────────────────────────
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+      });
+    }
+
+
+    // ── 4. Avatar helper functions ────────────────────────────────
+    //   Shows the Google profile photo when available,
+    //   falls back to coloured initials if the image fails or is absent.
+
+    function renderAvatar(containerId, photoURL, name, sizeClasses) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = "";                        // clear any previous content
+
+      if (photoURL) {
+        const img = document.createElement("img");
+        img.src       = photoURL;
+        img.className = "w-full h-full object-cover";
+        img.onerror   = () => renderInitials(el, name, sizeClasses); // fallback
+        el.appendChild(img);
+      } else {
+        renderInitials(el, name, sizeClasses);
+      }
+    }
+
+    function renderInitials(el, name, sizeClasses) {
+      const initials = (name || "?")
+        .trim()
+        .split(" ")
+        .map(w => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+
+      el.classList.add("avatar-initials", ...sizeClasses.split(" "));
+      el.textContent = initials;
+    }
+
+
+    // ── 5. UI interactions (unchanged from original) ──────────────
+
+    // Expose scrollProducts to the inline onclick="" attributes in the HTML
+    window.scrollProducts = function(dir) {
+      document.getElementById("productsRow")
+        .scrollBy({ left: dir * 320, behavior: "smooth" });
+    };
+
+    // Wishlist heart toggle on product cards
+    document.querySelectorAll(".product-card button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const path  = btn.querySelector("svg path");
+        const liked = btn.dataset.liked === "1";
+        path.setAttribute("fill",   liked ? "none"    : "#e53e3e");
+        path.setAttribute("stroke", liked ? "#555"    : "#e53e3e");
+        btn.dataset.liked = liked ? "0" : "1";
+      });
+    });
+
+    // Active nav highlight
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item")
+          .forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+      });
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Try-On — SmartFit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/shared.css"/>
+  <style>
+    .tryon-container{position:relative;border-radius:18px;overflow:hidden;background:#f0efeb;user-select:none;}
+    .tryon-overlay{position:absolute;top:0;left:0;height:100%;overflow:hidden;pointer-events:none;}
+    .tryon-line{position:absolute;top:0;bottom:0;width:2.5px;background:rgba(255,255,255,0.9);pointer-events:none;box-shadow:0 0 8px rgba(0,0,0,0.15);}
+    .tryon-handle{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.25);cursor:ew-resize;z-index:10;}
+    .product-thumb{border:2px solid transparent;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+    .product-thumb.active{border-color:#4a5c3a;}
+    .product-thumb img{width:64px;height:64px;object-fit:cover;display:block;}
+    .avatar-upload{border:2px dashed #d1d5db;border-radius:16px;padding:40px;text-align:center;cursor:pointer;transition:border .15s;}
+    .avatar-upload:hover{border-color:#4a5c3a;}
+  </style>
+</head>
+<body class="flex">
+<div id="sidebar-placeholder"></div>
+<div class="flex-1 flex flex-col min-h-screen">
+  <div id="topbar-placeholder"></div>
+  <main class="flex-1 p-6">
+    <div class="mb-5">
+      <h1 class="text-2xl font-bold text-gray-800">Virtual Try-On</h1>
+      <p class="text-sm text-gray-500 mt-0.5">See how outfits look on you before buying.</p>
+    </div>
+ 
+    <div class="flex gap-5 items-start">
+      <!-- Left: Try-On Viewer -->
+      <div class="flex-1 min-w-0">
+        <div class="bg-white rounded-2xl p-5 mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-semibold text-gray-700">Try-On Preview</div>
+            <div class="flex gap-2 text-xs">
+              <span class="text-gray-400">Before</span>
+              <div class="w-10 h-5 bg-gray-200 rounded-full relative cursor-pointer" id="compare-toggle"><div class="absolute w-4 h-4 bg-[#4a5c3a] rounded-full top-0.5 right-0.5 transition-all"></div></div>
+              <span class="text-gray-400">After</span>
+            </div>
+          </div>
+ 
+          <!-- Main viewer -->
+          <div class="flex justify-center">
+            <div class="tryon-container w-full max-w-md" style="height:420px;" id="tryon-main">
+              <!-- Before (base model) -->
+              <img id="model-base" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=500&q=80" class="w-full h-full object-cover" alt="model"/>
+              <!-- After (garment overlay) — half-width div that slides -->
+              <div class="tryon-overlay" id="tryon-overlay" style="width:50%">
+                <img id="model-overlay" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=500&q=80" class="h-full object-cover" style="width:inherit; min-width:100%;" alt="outfit"/>
+                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(74,92,58,0.08),transparent 40%);pointer-events:none;"></div>
+              </div>
+              <!-- Divider line + handle -->
+              <div class="tryon-line" id="tryon-line" style="left:50%"></div>
+              <div class="tryon-handle" id="tryon-handle" style="left:50%;margin-left:-18px">
+                <svg width="16" height="16" fill="none" stroke="#555" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4l-4 4 4 4M16 4l4 4-4 4"/></svg>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="flex gap-3 mt-4">
+            <button id="cart-from-tryon" class="btn-primary flex-1 justify-center">Add to Cart</button>
+            <button id="save-look-btn" class="btn-outline">Save Look</button>
+          </div>
+        </div>
+ 
+        <!-- Saved looks -->
+        <div class="bg-white rounded-2xl p-5">
+          <div class="font-semibold text-gray-700 mb-3">Saved Looks</div>
+          <div id="saved-looks" class="flex gap-3 overflow-x-auto scroll-row pb-1">
+            <div class="text-xs text-gray-400 py-6">No saved looks yet. Try on an outfit and save it!</div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Right: Product selector & model upload -->
+      <div class="w-72 flex-shrink-0 flex flex-col gap-4">
+ 
+        <!-- Avatar / model upload -->
+        <div class="bg-white rounded-2xl p-4">
+          <div class="font-semibold text-gray-700 text-sm mb-3">Your Model Photo</div>
+          <div class="avatar-upload" id="avatar-upload-area">
+            <input type="file" accept="image/*" class="hidden" id="avatar-input"/>
+            <div id="avatar-preview-wrap">
+              <svg width="32" height="32" fill="none" stroke="#aaa" stroke-width="1.5" viewBox="0 0 24 24" class="mx-auto mb-2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>
+              <div class="text-sm font-semibold text-gray-600">Upload your photo</div>
+              <div class="text-xs text-gray-400 mt-1">PNG, JPG up to 5MB</div>
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2 text-center">Works best with full-body, front-facing photos</p>
+        </div>
+ 
+        <!-- Product selector -->
+        <div class="bg-white rounded-2xl p-4 flex-1">
+          <div class="font-semibold text-gray-700 text-sm mb-3">Choose Outfit</div>
+          <div id="tryon-products" class="flex flex-col gap-2 max-h-96 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="sf-toast"></div>
+<script type="module">
+  import { initLayout } from "../js/layout.js";
+  import { PRODUCTS, addToCart } from "../js/products-data.js";
+  initLayout("tryon.html");
+ 
+  // Show clothing-type products
+  const tryonProducts = PRODUCTS.filter(p=>p.category!=="Shoes"&&p.category!=="Accessories");
+ 
+  // Check URL param
+  const params = new URLSearchParams(location.search);
+  let activeProduct = tryonProducts.find(p=>p.id===+params.get("id")) || tryonProducts[0];
+ 
+  // Render product list
+  function renderProductList() {
+    const el = document.getElementById("tryon-products");
+    el.innerHTML = tryonProducts.map(p=>`
+      <div class="flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-gray-50 transition tryon-product-item ${p.id===activeProduct.id?"bg-[#f8fbf6] border border-[#4a5c3a]/20":""}" data-id="${p.id}">
+        <img src="${p.img}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0"/>
+        <div class="min-w-0">
+          <div class="text-sm font-semibold text-gray-700 line-clamp-1">${p.name}</div>
+          <div class="text-xs text-gray-400">$${p.price.toFixed(2)}</div>
+        </div>
+        ${p.id===activeProduct.id?`<svg class="ml-auto flex-shrink-0 w-4 h-4 text-[#4a5c3a]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`:""}
+      </div>`).join("");
+    el.querySelectorAll(".tryon-product-item").forEach(item=>{
+      item.addEventListener("click",()=>{ activeProduct=tryonProducts.find(p=>p.id===+item.dataset.id); updateOverlay(); renderProductList(); });
+    });
+  }
+ 
+  // Update overlay image when product changes
+  function updateOverlay() {
+    document.getElementById("model-overlay").src = activeProduct.img;
+    document.getElementById("cart-from-tryon").onclick = ()=>{
+      addToCart(activeProduct, activeProduct.sizes[0], activeProduct.colors[0]);
+      toast(`${activeProduct.name} added to cart 🛒`); updateBadge();
+    };
+  }
+ 
+  // Drag slider
+  const container = document.getElementById("tryon-main");
+  const overlay   = document.getElementById("tryon-overlay");
+  const line      = document.getElementById("tryon-line");
+  const handle    = document.getElementById("tryon-handle");
+  let dragging = false;
+ 
+  function setPos(x) {
+    const rect = container.getBoundingClientRect();
+    let pct = Math.max(0,Math.min(1,(x-rect.left)/rect.width));
+    overlay.style.width = `${pct*100}%`;
+    line.style.left = `${pct*100}%`;
+    handle.style.left = `${pct*100}%`;
+  }
+ 
+  handle.addEventListener("mousedown",  e=>{ dragging=true; e.preventDefault(); });
+  handle.addEventListener("touchstart", e=>{ dragging=true; }, {passive:true});
+  document.addEventListener("mousemove", e=>{ if(dragging) setPos(e.clientX); });
+  document.addEventListener("touchmove", e=>{ if(dragging) setPos(e.touches[0].clientX); }, {passive:true});
+  document.addEventListener("mouseup",  ()=>dragging=false);
+  document.addEventListener("touchend", ()=>dragging=false);
+ 
+  // Avatar upload
+  const uploadArea = document.getElementById("avatar-upload-area");
+  const avatarInput = document.getElementById("avatar-input");
+  uploadArea.addEventListener("click", ()=>avatarInput.click());
+  avatarInput.addEventListener("change",()=>{
+    const file=avatarInput.files[0];
+    if(!file)return;
+    const url=URL.createObjectURL(file);
+    document.getElementById("model-base").src=url;
+    document.getElementById("model-overlay").src=url;
+    document.getElementById("avatar-preview-wrap").innerHTML=`<img src="${url}" class="w-24 h-32 object-cover rounded-xl mx-auto"/>`;
+    toast("Photo uploaded! Drag the slider to compare.");
+  });
+ 
+  // Save look
+  document.getElementById("save-look-btn").addEventListener("click",()=>{
+    const looks=JSON.parse(localStorage.getItem("sf_looks")||"[]");
+    looks.unshift({productId:activeProduct.id,img:activeProduct.img,name:activeProduct.name});
+    localStorage.setItem("sf_looks",JSON.stringify(looks.slice(0,10)));
+    renderSavedLooks(); toast("Look saved ✓");
+  });
+ 
+  function renderSavedLooks() {
+    const looks=JSON.parse(localStorage.getItem("sf_looks")||"[]");
+    const el=document.getElementById("saved-looks");
+    if(!looks.length){el.innerHTML=`<div class="text-xs text-gray-400 py-6">No saved looks yet. Try on an outfit and save it!</div>`;return;}
+    el.innerHTML=looks.map((l,i)=>`
+      <div class="flex-shrink-0 w-24 relative">
+        <img src="${l.img}" class="w-24 h-28 object-cover rounded-xl"/>
+        <div class="text-[10px] text-gray-500 mt-1 text-center leading-tight line-clamp-2">${l.name}</div>
+        <button class="del-look absolute top-1 right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow text-[#c0392b] text-xs font-bold" data-i="${i}">✕</button>
+      </div>`).join("");
+    el.querySelectorAll(".del-look").forEach(btn=>btn.addEventListener("click",()=>{
+      const l=JSON.parse(localStorage.getItem("sf_looks")||"[]"); l.splice(+btn.dataset.i,1);
+      localStorage.setItem("sf_looks",JSON.stringify(l)); renderSavedLooks();
+    }));
+  }
+ 
+  function updateBadge(){const cart=JSON.parse(localStorage.getItem("sf_cart")||"[]");const b=document.getElementById("cart-badge");if(b)b.textContent=cart.reduce((s,i)=>s+(i.qty||1),0);}
+  function toast(msg){const t=document.getElementById("sf-toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
+ 
+  renderProductList();
+  updateOverlay();
+  renderSavedLooks();
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wishlist — SmartFit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/shared.css"/>
+</head>
+<body class="flex">
+<div id="sidebar-placeholder"></div>
+<div class="flex-1 flex flex-col min-h-screen">
+  <div id="topbar-placeholder"></div>
+  <main class="flex-1 p-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">My Wishlist</h1>
+        <p class="text-sm text-gray-500 mt-0.5" id="wish-count">0 saved items</p>
+      </div>
+      <button id="add-all-btn" class="btn-primary">Add All to Cart</button>
+    </div>
+    <div id="wish-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    <div id="empty-wish" class="hidden flex flex-col items-center justify-center py-24 text-gray-400">
+      <svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="mb-3"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      <div class="font-semibold text-gray-600 mb-1">Your wishlist is empty</div>
+      <a href="products.html" class="text-sm text-[#4a5c3a] hover:underline mt-1">Browse Products →</a>
+    </div>
+  </main>
+</div>
+<div id="sf-toast"></div>
+<script type="module">
+  import { initLayout } from "../js/layout.js";
+  import { PRODUCTS, getWishlist, toggleWishlist, addToCart, getProductById } from "../js/products-data.js";
+  initLayout("wishlist.html");
+ 
+  function render() {
+    const ids = getWishlist();
+    const items = ids.map(id => getProductById(id)).filter(Boolean);
+    document.getElementById("wish-count").textContent = `${items.length} saved item${items.length!==1?"s":""}`;
+    const grid = document.getElementById("wish-grid");
+    const empty = document.getElementById("empty-wish");
+    if (!items.length) { grid.innerHTML=""; empty.classList.remove("hidden"); return; }
+    empty.classList.add("hidden");
+    grid.innerHTML = items.map(p=>`
+      <div class="bg-white rounded-2xl overflow-hidden product-card-grid">
+        <div class="relative cursor-pointer" onclick="location.href='product-details.html?id=${p.id}'">
+          <img src="${p.img}" alt="${p.name}" class="w-full h-48 object-cover"/>
+          <button class="remove-btn absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow hover:bg-red-50 transition" data-id="${p.id}" title="Remove from wishlist">
+            <svg width="13" height="13" fill="none" stroke="#c0392b" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="p-3">
+          <div class="text-sm font-semibold text-gray-700 line-clamp-1">${p.name}</div>
+          <div class="font-bold text-gray-800 mt-1">$${p.price.toFixed(2)}</div>
+          <button class="cart-btn mt-2 w-full btn-primary justify-center text-xs py-2" data-id="${p.id}">Add to Cart</button>
+        </div>
+      </div>`).join("");
+ 
+    grid.querySelectorAll(".remove-btn").forEach(btn=>btn.addEventListener("click",e=>{
+      e.stopPropagation(); toggleWishlist(+btn.dataset.id); toast("Removed from wishlist"); render();
+    }));
+    grid.querySelectorAll(".cart-btn").forEach(btn=>btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const p2 = getProductById(+btn.dataset.id);
+      addToCart(p2, p2.sizes[0], p2.colors[0]);
+      toast(`${p2.name} added to cart 🛒`);
+      updateBadge();
+    }));
+  }
+ 
+  document.getElementById("add-all-btn").addEventListener("click",()=>{
+    const ids=getWishlist();
+    ids.forEach(id=>{const p=getProductById(id);if(p)addToCart(p,p.sizes[0],p.colors[0]);});
+    toast("All wishlisted items added to cart 🛒"); updateBadge();
+  });
+ 
+  function updateBadge(){const cart=JSON.parse(localStorage.getItem("sf_cart")||"[]");const b=document.getElementById("cart-badge");if(b)b.textContent=cart.reduce((s,i)=>s+(i.qty||1),0);}
+  function toast(msg){const t=document.getElementById("sf-toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
+  render();
+</script>
+</body>
+</html>
